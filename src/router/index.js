@@ -1,5 +1,6 @@
 import { createWebHashHistory, createRouter } from "vue-router";
 import Index from "@/pages/frontend/index.vue";
+import Login from "@/pages/admin/login.vue";
 
 
 
@@ -11,7 +12,14 @@ const routes = [
         meta: { // meta 信息
             title: 'Weblog 首页' // 页面标题
         }
-    }
+    },
+    {
+        path: '/login', // 登录页
+        component: Login,
+        meta: {
+            title: 'Weblog 登录页'
+        }
+    },
 ]
 
 
@@ -20,7 +28,7 @@ const router = createRouter({
     // 指定路由的历史管理方式，hash 模式指的是 URL 的路径是通过 hash 符号（#）进行标识
     history: createWebHashHistory(),
     // routes: routes 的缩写
-    routes, 
+    routes,
 })
 
 export default router;
