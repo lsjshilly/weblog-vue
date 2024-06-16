@@ -41,7 +41,7 @@
                     </svg>
                 </button>
 
-                <div class="ml-2 p-1  hover:bg-gray-100  rounded-lg md:hover:bg-transparent  md:hover:text-blue-700"
+                <div class="ml-2 p-1  hover:bg-gray-100  rounded-lg md:hover:bg-transparent  md:hover:text-blue-700 md:hover:cursor-pointer"
                     @click="$router.push('/login')">登录
                 </div>
             </div>
