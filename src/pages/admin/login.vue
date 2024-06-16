@@ -26,7 +26,7 @@
                             :prefix-icon="User" />
                     </el-form-item>
                     <el-form-item prop="password">
-                        <el-input size="large" v-model="form.password" placeholder="请输入密码" type="password"
+                        <el-input size="large" v-model="form.password" placeholder="请输入密码" type="password" show-password
                             autocomplete="off" :prefix-icon="Lock" />
                     </el-form-item>
 
