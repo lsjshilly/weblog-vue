@@ -1,6 +1,6 @@
 <template>
 
-    <div class="bg-slate-800 text-white h-screen">
+    <div class="bg-slate-800 text-white h-screen" :style="{ width: menuStore.menuWidth }">
 
         <div class="flex items-center justify-center h-[64px]">
             <img src="../../../assets/weblog_log.jpg" />
@@ -39,9 +39,13 @@ import {
 } from '@element-plus/icons-vue'
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useMenuStore } from '@/stores/menu';
 
+const menuStore = useMenuStore();
 const route = useRoute()
 const router = useRouter()
+
+
 
 
 // 根据路由地址判断哪个菜单被选中

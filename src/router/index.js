@@ -3,6 +3,12 @@ import Index from "@/pages/frontend/index.vue";
 import Login from "@/pages/admin/login.vue";
 import AdminIndex from "@/pages/admin/index.vue";
 import Admin from "@/layouts/admin/admin.vue";
+import ArticleList from "@/pages/admin/article-list.vue";
+import BlogSetting from "@/pages/admin/blog-setting.vue";
+import CategoryList from "@/pages/admin/category-list.vue";
+import TagsList from "@/pages/admin/tags-list.vue";
+
+
 
 // 统一在这里声明所有路由
 const routes = [
@@ -30,7 +36,36 @@ const routes = [
                 meta: {
                     title: 'Weblog 后台管理'
                 }
+            },
+            {
+                path: '/admin/article/list', // 登录页
+                component: ArticleList,
+                meta: {
+                    title: 'Weblog 文章管理'
+                }
+            },
+            {
+                path: '/admin/category/list', // 登录页
+                component: CategoryList,
+                meta: {
+                    title: 'Weblog 归档管理'
+                }
+            },
+            {
+                path: '/admin/blog/setting', // 登录页
+                component: BlogSetting,
+                meta: {
+                    title: 'Weblog 博客设置'
+                }
+            },
+            {
+                path: '/admin/tag/list', // 登录页
+                component: TagsList,
+                meta: {
+                    title: 'Weblog 标签管理'
+                }
             }
+
         ]
     },
 ]

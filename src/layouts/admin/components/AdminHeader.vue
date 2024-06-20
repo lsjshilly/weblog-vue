@@ -1,7 +1,8 @@
 <template>
     <div class="bg-white h-[64px] flex pr-4 border-b border-slate-200">
 
-        <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 hover:bg-gray-200">
+        <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 hover:bg-gray-200"
+            @click="handleMenuWidth">
             <!-- 左边栏收缩、展开 -->
             <el-icon>
                 <Fold />
@@ -52,7 +53,23 @@
 
 <script setup>
 import { ArrowDown } from '@element-plus/icons-vue'
+import { useMenuStore } from '@/stores/menu';
+
+const menuStore = useMenuStore();
+
+const handleMenuWidth = () => {
+    console.log('clicksss')
+    menuStore.handleMenuWidth()
+}
+
+
+
+
+
 </script>
+
+
+
 
 <style scoped>
 .example-showcase .el-dropdown-link {
