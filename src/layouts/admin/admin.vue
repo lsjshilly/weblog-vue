@@ -1,7 +1,7 @@
 <template>
     <el-container>
 
-        <el-aside>
+        <el-aside :width="menuStore.menuWidth" class="transition-all">
 
             <AdminMenu></AdminMenu>
 
@@ -17,6 +17,8 @@
 
 
             <el-main>
+                <AdminTagList></AdminTagList>
+
                 <!-- 主内容（根据路由动态展示不同页面） -->
                 <router-view></router-view>
             </el-main>
@@ -38,6 +40,15 @@ import AdminHeader from './components/AdminHeader.vue';
 import AdminFooter from './components/AdminFooter.vue';
 import AdminMenu from './components/AdminMenu.vue';
 import AdminTagList from './components/AdminTagList.vue';
+import { useMenuStore } from '@/stores/menu';
+
+const menuStore = useMenuStore();
+
+
+
+
+
+
 </script>
 
 <style scoped>

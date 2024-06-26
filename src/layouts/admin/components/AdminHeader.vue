@@ -1,14 +1,14 @@
 <template>
-    <div class="bg-white h-[64px] flex pr-4 border-b border-slate-200">
+    <div class="bg-white h-[64px] flex pr-4 border-b border-slate-100">
 
         <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 hover:bg-gray-200"
             @click="handleMenuWidth">
             <!-- 左边栏收缩、展开 -->
-            <el-icon>
+            <el-icon v-if="menuStore.menuWidth === '250px'">
                 <Fold />
             </el-icon>
 
-            <el-icon>
+            <el-icon v-if="menuStore.menuWidth === '64px'">
                 <Expand />
             </el-icon>
         </div>
@@ -16,11 +16,28 @@
         <div class="ml-auto flex items-center">
 
             <!-- 点击全屏展示 -->
-            <el-tooltip content="全屏" placement="bottom">
-                <div
-                    class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 mr-2 hover:bg-gray-200">
+            <el-tooltip content="刷新" placement="bottom">
+                <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 mr-2 hover:bg-gray-200"
+                    @click="handleRefresh">
                     <el-icon>
-                        <FullScreen />
+                        <Refresh />
+                    </el-icon>
+                </div>
+
+            </el-tooltip>
+
+
+
+            <!-- 点击全屏展示 -->
+            <el-tooltip content="全屏" placement="bottom">
+                <div class="w-[42px] h-[64px] cursor-pointer flex items-center justify-center text-gray-700 mr-2 hover:bg-gray-200"
+                    @click="toggle">
+                    <el-icon>
+                        <FullScreen v-if="!isFullscreen" />
+                    </el-icon>
+
+                    <el-icon>
+                        <Aim v-if="isFullscreen" />
                     </el-icon>
 
                 </div>
@@ -54,6 +71,13 @@
 <script setup>
 import { ArrowDown } from '@element-plus/icons-vue'
 import { useMenuStore } from '@/stores/menu';
+import { useFullscreen } from '@vueuse/core';
+
+const { isFullscreen, toggle } = useFullscreen();
+
+const handleRefresh = () => {
+    window.location.reload()
+}
 
 const menuStore = useMenuStore();
 

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="bg-slate-800 text-white h-screen" :style="{ width: menuStore.menuWidth }">
+    <div class="bg-slate-800 text-white h-screen transition-all" :style="{ width: menuStore.menuWidth }">
 
         <div class="flex items-center justify-center h-[64px]">
             <img src="../../../assets/weblog_log.jpg" />
@@ -8,7 +8,7 @@
         </div>
 
         <el-menu active-text-color="#ffd04b" class="el-menu-vertical-demo" :default-active="defaultActive"
-            @select="handleSelect">
+            @select="handleSelect" :collapse="isCollapse" :collapse-transition="false">
 
             <template v-for="(item, index) in menus" :key="index">
                 <el-menu-item :index="item.path">
@@ -37,7 +37,7 @@ import {
     Location,
     Setting,
 } from '@element-plus/icons-vue'
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMenuStore } from '@/stores/menu';
 
@@ -45,6 +45,7 @@ const menuStore = useMenuStore();
 const route = useRoute()
 const router = useRouter()
 
+const isCollapse = computed(() => menuStore.menuWidth === '64px')
 
 
 
