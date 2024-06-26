@@ -8,7 +8,7 @@
         </div>
 
         <el-menu active-text-color="#ffd04b" class="el-menu-vertical-demo" :default-active="defaultActive"
-            @select="handleSelect" :collapse="isCollapse" :collapse-transition="false">
+            @select="handleSelect" :collapse="isCollapse" :collapse-transition="false" router="true">
 
             <template v-for="(item, index) in menus" :key="index">
                 <el-menu-item :index="item.path">
