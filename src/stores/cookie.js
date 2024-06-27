@@ -46,3 +46,17 @@ export function removeToken() {
     // 调用cookie.remove方法，传入TOKEN_KEY作为参数，删除对应的令牌信息
     return cookie.remove(TOKEN_KEY)
 }
+
+
+const TAB_LIST_KEY = "TAB_LIST_KEY"
+
+
+
+export function getTabList() {
+    return cookie.get(TAB_LIST_KEY) || []
+}
+
+
+export function setTabList(tabList) {
+    cookie.set(TAB_LIST_KEY, tabList)
+}

@@ -13,7 +13,7 @@
         </el-tabs>
 
         <span class="ml-auto flex items-center justify-center h-[32px] w-[32px] mr-2">
-            <el-dropdown>
+            <el-dropdown @command="handleCommand">
                 <span class="el-dropdown-link">
                     <el-icon>
                         <arrow-down />
@@ -21,8 +21,8 @@
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item>关闭其他</el-dropdown-item>
-                        <el-dropdown-item>关闭所有</el-dropdown-item>
+                        <el-dropdown-item command="closeOthers">关闭其他</el-dropdown-item>
+                        <el-dropdown-item command="closeAll">关闭所有</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -36,89 +36,9 @@
 <script setup>
 import { ref } from 'vue'
 import { ArrowDown } from '@element-plus/icons-vue'
-import { useMenuStore } from '@/stores/menu'
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { getTabList, setTabList } from '@/stores/tag-list';
+import { useTabList } from '@/utils/useTabList';
 
-const menuStore = useMenuStore()
-const route = useRoute()
-const router = useRouter()
-
-const activeTab = ref(route.path)
-
-const tabList = ref([
-    {
-        title: '仪表盘',
-        path: "/admin/index"
-    }
-])
-
-
-onBeforeRouteUpdate((to, form) => {
-
-    // Assuming 'to.meta.title' is a string
-    let titleParts = to.meta.title.split(' '); // Split the title by space
-    let lastPart = titleParts[titleParts.length - 1]; // Get the last part of the split array
-
-    let tab = {
-        title: lastPart,
-        path: to.path
-    }
-
-    activeTab.value = tab.path
-
-    let isTabNotExisted = tabList.value.findIndex(item => item.path == tab.path) == -1
-    if (isTabNotExisted) {
-        tabList.value.push(tab)
-    }
-
-    setTabList(tabList.value)
-
-})
-
-function initTabList() {
-    let tabs = getTabList()
-    if (tabs && tabs.length != 0) {
-        tabList.value = tabs
-    }
-}
-
-initTabList()
-
-
-const removeTab = (targetName) => {
-
-    let tabs = tabList.value
-    let actTab = activeTab.value
-
-    if (actTab == targetName) {
-        console.log(targetName)
-        tabs.forEach((tab, index) => {
-            if (tab.path == targetName) {
-                console.log(index)
-                let nextTab = tabs[index - 1] || tabs[index + 1]
-                if (nextTab) {
-                    actTab = nextTab.path
-                }
-            }
-        })
-    }
-
-    activeTab.value = actTab
-
-    tabList.value = tabList.value.filter(item => item.path != targetName)
-    setTabList(tabList.value)
-
-    changeTab(actTab)
-}
-
-
-const changeTab = (targetName) => {
-    console.log(targetName)
-    router.push(targetName)
-}
-
-
+const { menuStore, tabList, activeTab, removeTab, changeTab, handleCommand } = useTabList();
 
 
 

@@ -54,7 +54,7 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { showMessage } from '@/utils/message/message';
-import { setToken } from '@/utils/auth';
+import { setToken } from '@/stores/cookie';
 
 
 const loginloading = ref(false)

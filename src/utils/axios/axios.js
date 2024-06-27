@@ -1,7 +1,7 @@
 import axios from "axios";
 import { showMessage } from "../message/message";
 
-import { getToken } from "../auth";
+import { getToken } from "@/stores/cookie";
 
 const instance = axios.create({
     baseURL: "/api",

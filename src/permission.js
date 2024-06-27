@@ -1,5 +1,5 @@
 import router from "./router";
-import { getToken } from "./utils/auth";
+import { getToken } from "./stores/cookie";
 import { showMessage } from "./utils/message/message";
 import { showPageLoading, hidePageLoading } from "./utils/loading"
 
