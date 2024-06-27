@@ -5,7 +5,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-// import '@/permission'
+import '@/permission'
 // 引入全局状态管理 Pinia
 import { createPinia } from 'pinia'
 

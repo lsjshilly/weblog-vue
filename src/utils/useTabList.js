@@ -81,7 +81,7 @@ export function useTabList() {
 
 
     const changeTab = (targetName) => {
-        console.log(targetName)
+        activeTab.value = targetName
         router.push(targetName)
     }
 
