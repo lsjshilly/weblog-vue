@@ -55,7 +55,9 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { showMessage } from '@/utils/message/message';
 import { setToken } from '@/stores/cookie';
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore()
 
 const loginloading = ref(false)
 const router = useRouter()
@@ -126,6 +128,10 @@ const onsubmit = () => {
 
             // 保存ttoken
             setToken(loginResult.usertoken)
+
+            // 获取用户信息
+            userStore.setUserInfo()
+
             // 跳转首页
             router.push('/admin/index')
 
