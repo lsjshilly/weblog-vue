@@ -64,9 +64,7 @@ const menuStore = useMenuStore();
     padding: 0;
 }
 
-.el-main {
-    padding: 0;
-}
+
 
 .el-footer {
     padding: 0;
