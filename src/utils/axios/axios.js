@@ -27,6 +27,12 @@ instance.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
+        // 过滤掉params中为空或null的字段，通常用于GET请求的查询参数
+        if (config.params) {
+            config.params = Object.fromEntries(
+                Object.entries(config.params).filter(([key, value]) => value !== null && value !== '')
+            );
+        }
 
         return config
     },

@@ -5,17 +5,17 @@
             <!-- flex 布局，内容垂直居中 -->
             <div class="flex items-center">
                 <el-text>分类名称</el-text>
-                <div class="ml-3 w-52 mr-5"><el-input v-model="searchCategoryName" placeholder="请输入（模糊查询）" /></div>
+                <div class="ml-3 w-52 mr-5"><el-input v-model="searchCondition.name" placeholder="请输入（模糊查询）" /></div>
 
                 <el-text>创建日期</el-text>
                 <div class="ml-3 w-30 mr-5">
                     <!-- 日期选择组件（区间选择） -->
-                    <el-date-picker v-model="pickDate" type="daterange" range-separator="至" start-placeholder="开始时间"
-                        end-placeholder="结束时间" size="default" />
+                    <el-date-picker v-model="pickerData" type="daterange" range-separator="至" start-placeholder="开始时间"
+                        end-placeholder="结束时间" size="default" @change="dataPickerChange" />
                 </div>
 
-                <el-button type="primary" class="ml-3" :icon="Search">查询</el-button>
-                <el-button class="ml-3" :icon="RefreshRight">重置</el-button>
+                <el-button type="primary" class="ml-3" :icon="Search" @click="getCategoryData">查询</el-button>
+                <el-button class="ml-3" :icon="RefreshRight" @click="resetCategoryData">重置</el-button>
             </div>
         </el-card>
 
@@ -35,7 +35,7 @@
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column label="操作">
                     <template #default="scope">
-                        <el-button type="danger" size="small">
+                        <el-button type="danger" size="small" @click="deleteCategory(scope.row.id)">
                             <el-icon class="mr-1">
                                 <Delete />
                             </el-icon>
@@ -58,25 +58,23 @@
 
 <script setup>
 import { Search, RefreshRight } from '@element-plus/icons-vue'
-import { ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
+import moment from 'moment';
+import { getCategoryPageList } from '@/api/admin/category'
 
-// 分页查询的分类名称
-const searchCategoryName = ref('')
-// 日期
-const pickDate = ref('')
+const pickerData = ref('')
+
+// 查询条件
+const searchCondition = reactive({
+    name: '',
+    startDate: '',
+    endDate: ''
+})
+
 
 
 // 表格数据
-const tableData = [
-    {
-        createTime: '2016-05-03 12:00:00',
-        name: 'Java'
-    },
-    {
-        createTime: '2016-05-03 12:00:00',
-        name: 'Minio'
-    },
-]
+const tableData = ref([])
 
 // 当前页码，给了一个默认值 1
 const current = ref(1)
@@ -84,5 +82,49 @@ const current = ref(1)
 const total = ref(0)
 // 每页显示的数据量，给了个默认值 10
 const size = ref(10)
+
+
+const dataPickerChange = (val) => {
+    searchCondition.startDate = moment(val[0]).format('YYYY-MM-DD')
+    searchCondition.endDate = moment(val[1]).format('YYYY-MM-DD')
+}
+
+
+const getCategoryData = async () => {
+
+    const data = await getCategoryPageList({
+        ...searchCondition,
+        pageSize: size.value,
+        pageNum: current.value
+    })
+
+    total.value = data.total
+    tableData.value = data.items
+
+}
+
+function conditionReset() {
+    searchCondition.name = ''
+    searchCondition.startDate = ''
+    searchCondition.endDate = ''
+}
+
+
+const resetCategoryData = () => {
+    conditionReset()
+    getCategoryData()
+}
+
+const deleteCategory = (id) => {
+    console.log('删除', id)
+}
+
+
+onMounted(() => {
+    // 获取表格数据
+    getCategoryData()
+})
+
+
 
 </script>
