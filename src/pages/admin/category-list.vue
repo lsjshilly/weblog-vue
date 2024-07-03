@@ -22,7 +22,7 @@
         <el-card shadow="never">
             <!-- 新增按钮 -->
             <div class="mb-5">
-                <el-button type="primary" @click="dialogVisible = true">
+                <el-button type="primary" @click="addCategoryBtnClick">
                     <el-icon class="mr-1">
                         <Plus />
                     </el-icon>
@@ -30,7 +30,7 @@
             </div>
 
             <!-- 分页列表 -->
-            <el-table :data="tableData" border stripe style="width: 100%">
+            <el-table :data="tableData" border stripe style="width: 100%" v-loading="tableloading">
                 <el-table-column prop="name" label="分类名称" width="180" />
                 <el-table-column prop="createTime" label="创建时间" width="180" />
                 <el-table-column label="操作">
@@ -56,8 +56,8 @@
 
 
 
-        <el-dialog v-model="dialogVisible" title="新增分类" width="500">
-
+        <from-dialog ref="formDialogVisible" title="新增分类" destroyOnClose
+            @submit="addCategoryAction(addCategoryFormRef)">
             <el-form :model="addCategoryForm" :rules="rules" label-width="auto" style="max-width: 600px"
                 ref="addCategoryFormRef">
                 <el-form-item label="名称">
@@ -65,16 +65,9 @@
                         placeholder="请输入分类名称" />
                 </el-form-item>
             </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="clearFormValue">取消</el-button>
-                    <el-button type="primary" @click="addCategoryAction(addCategoryFormRef)"
-                        :loading="addActionLoading">
-                        确认
-                    </el-button>
-                </div>
-            </template>
-        </el-dialog>
+
+        </from-dialog>
+
 
 
     </div>
@@ -97,7 +90,7 @@ const searchCondition = reactive({
     endDate: ''
 })
 
-
+const tableloading = ref(false)
 
 // 表格数据
 const tableData = ref([])
@@ -111,19 +104,20 @@ const size = ref(10)
 
 
 // 对话框是否显示
-const dialogVisible = ref(false)
-
+const formDialogVisible = ref(null)
 
 // 表单引用
 const addCategoryFormRef = ref(null)
 
-// 新增表单
+// 新增表单model
 const addCategoryForm = reactive({
     name: '',
 
 })
 
-const addActionLoading = ref(false)
+const addCategoryBtnClick = () => {
+    formDialogVisible.value.open()
+}
 
 
 const shortcuts = [
@@ -166,14 +160,21 @@ const dataPickerChange = (val) => {
 
 const getCategoryData = async () => {
 
-    const data = await getCategoryPageList({
-        ...searchCondition,
-        pageSize: size.value,
-        pageNum: current.value
-    })
+    tableloading.value = true
+    try {
+        const data = await getCategoryPageList({
+            ...searchCondition,
+            pageSize: size.value,
+            pageNum: current.value
+        })
 
-    total.value = data.total
-    tableData.value = data.items
+        total.value = data.total
+        tableData.value = data.items
+    } finally {
+        tableloading.value = false
+
+    }
+
 
 }
 
@@ -234,7 +235,7 @@ const addCategoryAction = (formEl) => {
 
         try {
             // 登录loading状态
-            addActionLoading.value = true
+            formDialogVisible.value.showBtnLoading()
             // 调用新增接口
             await addCategory(addCategoryForm)
 
@@ -243,9 +244,10 @@ const addCategoryAction = (formEl) => {
 
         } finally {
             // 停止loading  
-            addActionLoading.value = false
+            formDialogVisible.value.hideBtnLoading()
             // 成功之后清清除信息
             clearFormValue()
+            formDialogVisible.value.close()
             // 刷新表格
             getCategoryData()
         }
@@ -255,9 +257,7 @@ const addCategoryAction = (formEl) => {
 
 
 function clearFormValue() {
-    dialogVisible.value = false
     addCategoryForm.name = ''
-    console.log(addCategoryForm.name)
 }
 
 
