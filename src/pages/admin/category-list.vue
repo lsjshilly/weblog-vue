@@ -11,7 +11,7 @@
                 <div class="ml-3 w-30 mr-5">
                     <!-- 日期选择组件（区间选择） -->
                     <el-date-picker v-model="pickerData" type="daterange" range-separator="至" start-placeholder="开始时间"
-                        end-placeholder="结束时间" size="default" @change="dataPickerChange" />
+                        end-placeholder="结束时间" size="default" @change="dataPickerChange" :shortcuts="shortcuts" />
                 </div>
 
                 <el-button type="primary" class="ml-3" :icon="Search" @click="getCategoryData">查询</el-button>
@@ -48,7 +48,8 @@
             <!-- 分页 -->
             <div class="mt-10 flex justify-center">
                 <el-pagination v-model:current-page="current" v-model:page-size="size" :page-sizes="[10, 20, 50]"
-                    :small="false" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="total" />
+                    :small="false" :background="true" layout="total, sizes, prev, pager, next, jumper" :total="total"
+                    @size-change="sizeChange" @current-change="currentChange" />
             </div>
 
         </el-card>
@@ -84,6 +85,38 @@ const total = ref(0)
 const size = ref(10)
 
 
+const shortcuts = [
+    {
+        text: '最近一周',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setDate(start.getDate() - 7)
+            return [start, end]
+        },
+    },
+    {
+        text: '最近一月',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setMonth(start.getMonth() - 1)
+            return [start, end]
+        },
+    },
+    {
+        text: '最近三月',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setMonth(start.getMonth() - 3)
+            return [start, end]
+        },
+    },
+]
+
+
+
 const dataPickerChange = (val) => {
     searchCondition.startDate = moment(val[0]).format('YYYY-MM-DD')
     searchCondition.endDate = moment(val[1]).format('YYYY-MM-DD')
@@ -102,6 +135,19 @@ const getCategoryData = async () => {
     tableData.value = data.items
 
 }
+
+
+const sizeChange = (val) => {
+    size.value = val
+    getCategoryData()
+}
+
+const currentChange = (val) => {
+    current.value = val
+    getCategoryData()
+}
+
+
 
 function conditionReset() {
     searchCondition.name = ''
