@@ -22,7 +22,7 @@
         <el-card shadow="never">
             <!-- 新增按钮 -->
             <div class="mb-5">
-                <el-button type="primary">
+                <el-button type="primary" @click="dialogVisible = true">
                     <el-icon class="mr-1">
                         <Plus />
                     </el-icon>
@@ -54,6 +54,29 @@
 
         </el-card>
 
+
+
+        <el-dialog v-model="dialogVisible" title="新增分类" width="500">
+
+            <el-form :model="addCategoryForm" :rules="rules" label-width="auto" style="max-width: 600px"
+                ref="addCategoryFormRef">
+                <el-form-item label="名称">
+                    <el-input v-model="addCategoryForm.name" show-word-limit maxlength="10" clearable
+                        placeholder="请输入分类名称" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <div class="dialog-footer">
+                    <el-button @click="clearFormValue">取消</el-button>
+                    <el-button type="primary" @click="addCategoryAction(addCategoryFormRef)"
+                        :loading="addActionLoading">
+                        确认
+                    </el-button>
+                </div>
+            </template>
+        </el-dialog>
+
+
     </div>
 </template>
 
@@ -61,7 +84,9 @@
 import { Search, RefreshRight } from '@element-plus/icons-vue'
 import { onMounted, reactive, ref } from 'vue';
 import moment from 'moment';
-import { getCategoryPageList } from '@/api/admin/category'
+import { getCategoryPageList, addCategory, deleteCategoryById } from '@/api/admin/category'
+import { showMessage, showModel } from '@/utils/message/message';
+
 
 const pickerData = ref('')
 
@@ -83,6 +108,22 @@ const current = ref(1)
 const total = ref(0)
 // 每页显示的数据量，给了个默认值 10
 const size = ref(10)
+
+
+// 对话框是否显示
+const dialogVisible = ref(false)
+
+
+// 表单引用
+const addCategoryFormRef = ref(null)
+
+// 新增表单
+const addCategoryForm = reactive({
+    name: '',
+
+})
+
+const addActionLoading = ref(false)
 
 
 const shortcuts = [
@@ -163,6 +204,13 @@ const resetCategoryData = () => {
 
 const deleteCategory = (id) => {
     console.log('删除', id)
+    showModel('是否确定删除该分类？', '提示', 'warning').then(async () => {
+        // 删除
+        await deleteCategoryById(id)
+        showMessage('删除成功')
+        // 刷新表格
+        getCategoryData()
+    })
 }
 
 
@@ -171,6 +219,63 @@ onMounted(() => {
     getCategoryData()
 })
 
+
+
+const addCategoryAction = (formEl) => {
+
+    if (!formEl) return
+    // 表单验证
+    formEl.validate(async (valid) => {
+
+        if (!valid) {
+            console.log('表单验证不通过')
+            return false
+        }
+
+        try {
+            // 登录loading状态
+            addActionLoading.value = true
+            // 调用新增接口
+            await addCategory(addCategoryForm)
+
+            // 提示成功
+            showMessage('添加成功')
+
+        } finally {
+            // 停止loading  
+            addActionLoading.value = false
+            // 成功之后清清除信息
+            clearFormValue()
+            // 刷新表格
+            getCategoryData()
+        }
+
+    })
+}
+
+
+function clearFormValue() {
+    dialogVisible.value = false
+    addCategoryForm.name = ''
+    console.log(addCategoryForm.name)
+}
+
+
+
+const rules = reactive({
+    name: [{
+        required: true,
+        message: '分类名称不能为空',
+        trigger: 'blur',
+    },
+    {
+        max: 10,
+        message: '分类名称不能大于10位',
+        trigger: 'blur',
+    }
+    ],
+
+})
 
 
 </script>
