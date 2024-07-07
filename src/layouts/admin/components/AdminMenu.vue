@@ -1,6 +1,7 @@
 <template>
 
-    <div class="bg-slate-800 text-white h-screen transition-all" :style="{ width: menuStore.menuWidth }">
+    <div class=" fixed overflow-y-auto bg-slate-800 text-white h-screen transition-all"
+        :style="{ width: menuStore.menuWidth }">
 
         <div class="flex items-center justify-center h-[64px]">
             <img src="../../../assets/weblog_log.jpg" />

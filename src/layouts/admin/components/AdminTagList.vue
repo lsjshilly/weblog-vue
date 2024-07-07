@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed bg-white top-[64px] px-2 right-0 h-[44px] flex items-center"
+    <div class="fixed bg-white top-[64px] px-2 right-0 h-[44px] z-50 flex items-center"
         :style="{ left: menuStore.menuWidth }">
 
 

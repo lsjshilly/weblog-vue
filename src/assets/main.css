@@ -25,7 +25,7 @@ body {
 [type="time"]:focus,
 [type="week"]:focus,
 [multiple]:focus,
-textarea:focus,
+/* textarea:focus, */
 select:focus {
   box-shadow: 0 0 0 1px transparent inset !important;
 }
