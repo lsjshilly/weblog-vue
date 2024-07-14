@@ -13,3 +13,10 @@ export function deleteTagById(id, opts = {}) {
     let data = { id: id }
     return http.delete('/admin/tag/delete', { ...opts, data: data })
 }
+
+
+
+
+export function getTagAllList(params, opts = {}) {
+    return http.get('/admin/tag/select/list', { ...opts, params: params })
+}

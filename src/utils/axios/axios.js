@@ -1,11 +1,16 @@
 import axios from "axios";
+import qs from 'qs'
 import { showMessage } from "../message/message";
 
 import { getToken } from "@/stores/cookie";
 
 const instance = axios.create({
     baseURL: "/api",
-    timeout: 7000
+    timeout: 7000,
+    paramsSerializer: params => {
+        console.log('Params before stringify:', params);
+        return qs.stringify(params, { indices: false });
+    }
 })
 
 
@@ -20,6 +25,7 @@ const instance = axios.create({
  */
 instance.interceptors.request.use(
     config => {
+
         // 发送请求之前做些什么
         const token = getToken()
 
@@ -27,10 +33,11 @@ instance.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
         }
+
         // 过滤掉params中为空或null的字段，通常用于GET请求的查询参数
         if (config.params) {
             config.params = Object.fromEntries(
-                Object.entries(config.params).filter(([key, value]) => value !== null && value !== '')
+                Object.entries(config.params).filter(([key, value]) => value !== null && value !== undefined)
             );
         }
 

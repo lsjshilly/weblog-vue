@@ -13,3 +13,7 @@ export function deleteCategoryById(id, opts = {}) {
     let data = { id: id }
     return http.delete('/admin/category/delete', { ...opts, data: data })
 }
+
+export function getCategoryAllList(opts = {}) {
+    return http.get('/admin/category/select/list', opts)
+}
