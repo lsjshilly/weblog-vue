@@ -61,7 +61,7 @@
 
             <!-- 分页列表 -->
             <el-table :data="tableData" border stripe style="width: 100%" v-loading="tableloading" size="small">
-                <el-table-column prop="title" label="文章标题" width="180" />
+                <el-table-column prop="title" label="文章标题" width="180" show-overflow-tooltip />
 
                 <el-table-column label="封面" width="85">
                     <template #default="scope">
