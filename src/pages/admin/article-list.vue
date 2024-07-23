@@ -52,7 +52,7 @@
         <el-card shadow="never">
             <!-- 新增按钮 -->
             <div class="mb-5">
-                <el-button type="primary" @click="isArticlePublishEditorShow = true">
+                <el-button type="primary" @click="addArticle">
                     <el-icon class="mr-1">
                         <Plus />
                     </el-icon>
@@ -87,7 +87,7 @@
                 <el-table-column prop="updateTime" label="更新时间" width="180" />
                 <el-table-column label="操作">
                     <template #default="scope">
-                        <el-button type="primary" :icon="Edit" size="small">
+                        <el-button type="primary" :icon="Edit" size="small" @click="editArticle(scope.row.id)">
                             编辑
                         </el-button>
                         <el-button type="danger" size="small" @click="deleteArticle(scope.row.id)">
@@ -112,74 +112,23 @@
 
 
         <!-- 写博客 -->
-        <el-dialog v-model="isArticlePublishEditorShow" :show-close="false" :fullscreen="true">
-            <template #header="{ close, titleId, titleClass }">
-                <el-affix :offset="20" style="width: 100%;">
-                    <div class="flex   bg-white">
-                        <h4 class="font-bold">写文章</h4>
-                        <div class="ml-auto mr-5">
-                            <el-button plain @click="close">取消</el-button>
-                            <el-button type="primary" plain :icon="Position">取消</el-button>
-                        </div>
-                    </div>
-
-                </el-affix>
-            </template>
-            <!-- label-position="top" 用于指定 label 元素在上面 -->
-            <el-form :model="form" ref="publishArticleFormRef" label-position="top" size="large" :rules="rules">
-                <el-form-item label="标题" prop="title">
-                    <el-input v-model="form.title" autocomplete="off" size="large" maxlength="40" show-word-limit
-                        clearable />
-                </el-form-item>
-                <el-form-item label="内容" prop="content">
-                    <!-- Markdown 编辑器 -->
-                    <MdEditor v-model="form.content" editorId="publishArticleEditor" />
-                </el-form-item>
-                <el-form-item label="封面" prop="cover">
-                    <el-upload class="avatar-uploader" action="#" :auto-upload="false" :show-file-list="false">
-                        <img v-if="form.cover" :src="form.cover" class="avatar" />
-                        <el-icon v-else class="avatar-uploader-icon">
-                            <Plus />
-                        </el-icon>
-                    </el-upload>
-                </el-form-item>
-                <el-form-item label="摘要" prop="summary">
-                    <!-- :rows="3" 指定 textarea 默认显示 3 行 -->
-                    <el-input v-model="form.summary" :rows="3" type="textarea" placeholder="请输入文章摘要" />
-                </el-form-item>
-                <el-form-item label="分类" prop="categoryId">
-                    <el-select v-model="form.categoryId" clearable placeholder="---请选择---" size="large">
-
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="标签" prop="tags">
-                    <!-- 标签选择 -->
-                    <el-select v-model="form.tags" multiple filterable remote reserve-keyword placeholder="---请输入---"
-                        remote-show-suffix :remote-method="remoteMethod" allow-create default-first-option
-                        :loading="tagSelectLoading" size="large">
-
-                    </el-select>
-                </el-form-item>
-            </el-form>
-        </el-dialog>
-
-
-
+        <ArticleEdit ref="articleEditRef" :form="form" @before-close="beforeClose"></ArticleEdit>
     </div>
 </template>
 
 <script setup>
-import { Search, RefreshRight, Edit, Position } from '@element-plus/icons-vue'
+import { Search, RefreshRight, Edit, Position, Document } from '@element-plus/icons-vue'
 import { computed, onMounted, reactive, ref } from 'vue';
 import moment from 'moment';
 import { getCategoryPageList, addCategory, deleteCategoryById, getCategoryAllList as getCategoryAllListApi } from '@/api/admin/category'
 import { getTagAllList as getTagAllListApi } from '@/api/admin/tag'
 import { showMessage, showModel } from '@/utils/message/message';
 
-import { getArticlePageListApi, deleteArticleByIdApi } from '@/api/admin/article'
+import { getArticlePageListApi, deleteArticleByIdApi, getArticleDetailApi } from '@/api/admin/article'
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import 'md-editor-v3/lib/style.css'
 import { MdEditor } from 'md-editor-v3';
+import ArticleEdit from './article-edit.vue'
 
 // 日期选择组件（区间选择）
 const pickerData = ref('')
@@ -288,7 +237,6 @@ const getTagAllList = async () => {
 
 
 
-
 /*
  * 表格数据相关
 */
@@ -370,11 +318,7 @@ const deleteArticle = (id) => {
  * 新增文章对话框相关
 */
 
-// 对话框是否显示
-const isArticlePublishEditorShow = ref(false)
-
-// 发布文章表单引用
-const publishArticleFormRef = ref(null)
+const articleEditRef = ref(null)
 
 // 表单对象
 const form = reactive({
@@ -387,22 +331,36 @@ const form = reactive({
     summary: ""
 })
 
-// 表单校验规则
-const rules = {
-    title: [
-        { required: true, message: '请输入文章标题', trigger: 'blur' },
-        { min: 1, max: 40, message: '文章标题要求大于1个字符，小于40个字符', trigger: 'blur' },
-    ],
-    content: [{ required: true }],
-    cover: [{ required: true }],
-    categoryId: [{ required: true, message: '请选择文章分类', trigger: 'blur' }],
-    tags: [{ required: true, message: '请选择文章标签', trigger: 'blur' }],
+
+const addArticle = () => {
+    articleEditRef.value.open()
+}
+
+const editArticle = async (id) => {
+    const data = await getArticleDetailApi({ id: id })
+    form.id = data.id
+    form.title = data.title
+    form.content = data.content
+    form.cover = data.cover
+    form.categoryId = data.category
+    form.tags = data.tags.map(item => item.name)
+    articleEditRef.value.open()
 }
 
 
+const beforeClose = () => {
+    form.id = null
+    form.title = ''
+    form.content = '请输入内容'
+    form.cover = ''
+    form.categoryId = null
+    form.tags = []
+    console.log('from 变化了', form)
 
+    // 刷新表格
+    getArticleListData()
 
-
+}
 
 onMounted(() => {
     getArticleListData()
@@ -414,48 +372,10 @@ onMounted(() => {
 
 
 
-const addCategoryAction = (formEl) => {
-
-    if (!formEl) return
-    // 表单验证
-    formEl.validate(async (valid) => {
-
-        if (!valid) {
-            console.log('表单验证不通过')
-            return false
-        }
-
-        try {
-            // 登录loading状态
-            formDialogVisible.value.showBtnLoading()
-            // 调用新增接口
-            await addCategory(addCategoryForm)
-
-            // 提示成功
-            showMessage('添加成功')
-
-        } finally {
-            // 停止loading  
-            formDialogVisible.value.hideBtnLoading()
-            // 成功之后清清除信息
-            clearFormValue()
-            formDialogVisible.value.close()
-            // 刷新表格
-            getArticleListData()
-        }
-
-    })
-}
-
-
-function clearFormValue() {
-    addCategoryForm.name = ''
-}
-
 
 </script>
 
-<style scoped>
+<style>
 .avatar-uploader .el-upload {
     border: 1px dashed var(--el-border-color);
     border-radius: 6px;
@@ -475,5 +395,10 @@ function clearFormValue() {
     width: 200px;
     height: 100px;
     text-align: center;
+}
+
+.md-editor-footer {
+    height: 40px;
+
 }
 </style>
